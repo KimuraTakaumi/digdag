@@ -240,7 +240,7 @@ Runs a digdag server. --memory or --database option is required. Examples:
 :command:`-n, --port PORT`
   Port number to listen for web interface and api clients (default: 65432).
 
-  Example: -n 8080
+  Example: -p 8080
 
 :command:`-b, --bind ADDRESS`
   IP address to listen HTTP clients (default: 127.0.0.1).
@@ -635,3 +635,4 @@ Common options
 
 :command:`-X KEY=VALUE`
   Add a performance system configuration. This option is for experimental use.
+
