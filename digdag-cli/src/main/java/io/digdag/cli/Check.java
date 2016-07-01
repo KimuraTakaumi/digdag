@@ -19,8 +19,9 @@ import com.google.inject.Scopes;
 import io.digdag.core.DigdagEmbed;
 import io.digdag.core.archive.ProjectArchive;
 import io.digdag.core.archive.ProjectArchiveLoader;
-import io.digdag.core.repository.Revision;
 import io.digdag.core.archive.ArchiveMetadata;
+import io.digdag.core.repository.ArchiveType;
+import io.digdag.core.repository.Revision;
 import io.digdag.core.repository.WorkflowDefinition;
 import io.digdag.core.repository.WorkflowDefinitionList;
 import io.digdag.core.workflow.WorkflowCompiler;
@@ -128,11 +129,12 @@ public class Check
         final YamlMapper yamlMapper = injector.getInstance(YamlMapper.class);
         final WorkflowCompiler compiler = injector.getInstance(WorkflowCompiler.class);
         final SchedulerManager schedulerManager = injector.getInstance(SchedulerManager.class);
+        final ConfigFactory configFactory = injector.getInstance(ConfigFactory.class);
 
         ArchiveMetadata meta = project.getArchiveMetadata();
 
-        Revision rev = Revision.builderFromArchive("check", meta)
-            .archiveType("null")
+        Revision rev = Revision.builderFromArchive("check", meta, configFactory.create())
+            .archiveType(ArchiveType.NONE)
             .build();
 
         WorkflowDefinitionList defs = meta.getWorkflowList();

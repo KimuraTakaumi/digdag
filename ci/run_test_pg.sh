@@ -6,6 +6,8 @@ port = 5432
 user = digdag_test
 password =
 database = digdag_test
+idleTimeout = 5
+minimumPoolSize = 0
 "
 
 docker run \
@@ -13,5 +15,6 @@ docker run \
 -v `pwd`/:/digdag \
 -v ~/.gradle:/root/.gradle \
 -e DIGDAG_TEST_POSTGRESQL="${DIGDAG_TEST_POSTGRESQL}" \
+-e TD_API_KEY="${TD_API_KEY}" \
 digdag-build \
 sh -c "/etc/init.d/postgresql start && ./gradlew test --info --no-daemon"

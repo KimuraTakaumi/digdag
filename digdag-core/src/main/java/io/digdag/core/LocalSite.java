@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.google.inject.Inject;
 import com.google.common.base.*;
 import com.google.common.collect.*;
+import io.digdag.client.config.ConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.digdag.core.archive.ArchiveMetadata;
@@ -23,6 +24,7 @@ public class LocalSite
     private final AttemptBuilder attemptBuilder;
     private final WorkflowExecutor exec;
     private final SchedulerManager srm;
+    private final ConfigFactory cf;
 
     @Inject
     public LocalSite(
@@ -31,7 +33,8 @@ public class LocalSite
             SessionStoreManager sessionStoreManager,
             AttemptBuilder attemptBuilder,
             WorkflowExecutor exec,
-            SchedulerManager srm)
+            SchedulerManager srm,
+            ConfigFactory cf)
     {
         this.compiler = compiler;
         this.projectStore = projectStoreManager.getProjectStore(0);
@@ -39,6 +42,7 @@ public class LocalSite
         this.attemptBuilder = attemptBuilder;
         this.exec = exec;
         this.srm = srm;
+        this.cf = cf;
     }
 
     public AttemptBuilder getAttemptBuilder()
@@ -114,8 +118,8 @@ public class LocalSite
     {
         return storeLocalWorkflowsImpl(
                 projectName,
-                Revision.builderFromArchive(revisionName, archive)
-                    .archiveType("none")
+                Revision.builderFromArchive(revisionName, archive, cf.create())
+                    .archiveType(ArchiveType.NONE)
                     .build(),
                 archive.getWorkflowList(),
                 Optional.absent());
@@ -130,8 +134,8 @@ public class LocalSite
     {
         return storeLocalWorkflowsImpl(
                 projectName,
-                Revision.builderFromArchive(revisionName, archive)
-                    .archiveType("none")
+                Revision.builderFromArchive(revisionName, archive, cf.create())
+                    .archiveType(ArchiveType.NONE)
                     .build(),
                 archive.getWorkflowList(),
                 Optional.of(currentTimeForSchedule));

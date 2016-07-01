@@ -7,14 +7,17 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @Value.Immutable
 @JsonSerialize(as = ImmutableDirectDownloadHandle.class)
 @JsonDeserialize(as = ImmutableDirectDownloadHandle.class)
-public abstract class DirectDownloadHandle
+public interface DirectDownloadHandle
 {
-    public abstract String getType();
+    String getType();
 
-    public abstract String getUrl();
+    String getUrl();
 
-    public static ImmutableDirectDownloadHandle.Builder builder()
+    static DirectDownloadHandle of(String type, String url)
     {
-        return ImmutableDirectDownloadHandle.builder();
+        return ImmutableDirectDownloadHandle.builder()
+            .type(type)
+            .url(url)
+            .build();
     }
 }

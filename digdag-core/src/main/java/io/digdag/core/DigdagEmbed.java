@@ -17,9 +17,8 @@ import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.util.Modules;
 import com.google.inject.multibindings.Multibinder;
+import io.digdag.core.notification.NotificationModule;
 import io.digdag.core.queue.QueueModule;
-import io.digdag.core.log.NullLogServerFactory;
-import io.digdag.core.log.LocalFileLogServerFactory;
 import io.digdag.core.config.YamlConfigLoader;
 import io.digdag.core.database.DatabaseModule;
 import io.digdag.core.workflow.WorkflowModule;
@@ -30,7 +29,11 @@ import io.digdag.core.config.ConfigModule;
 import io.digdag.core.archive.ProjectArchiveLoader;
 import io.digdag.core.agent.AgentModule;
 import io.digdag.core.agent.LocalAgentModule;
+import io.digdag.core.storage.StorageModule;
 import io.digdag.core.log.LogModule;
+import io.digdag.core.plugin.PluginSet;
+import io.digdag.core.plugin.DynamicPluginModule;
+import io.digdag.core.plugin.SystemPluginModule;
 import org.embulk.guice.LifeCycleInjector;
 import com.fasterxml.jackson.module.guice.ObjectMapperModule;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
@@ -45,6 +48,7 @@ public class DigdagEmbed
     {
         private final List<Function<? super List<Module>, ? extends Iterable<? extends Module>>> moduleOverrides = new ArrayList<>();
         private ConfigElement systemConfig = ConfigElement.empty();
+        private PluginSet systemPlugins = PluginSet.empty();
         private boolean withWorkflowExecutor = true;
         private boolean withScheduleExecutor = true;
         private boolean withLocalAgent = true;
@@ -80,6 +84,12 @@ public class DigdagEmbed
         public Bootstrap setSystemConfig(ConfigElement systemConfig)
         {
             this.systemConfig = systemConfig;
+            return this;
+        }
+
+        public Bootstrap setSystemPlugins(PluginSet systemPlugins)
+        {
+            this.systemPlugins = systemPlugins;
             return this;
         }
 
@@ -142,6 +152,8 @@ public class DigdagEmbed
                     new ObjectMapperModule()
                         .registerModule(new GuavaModule())
                         .registerModule(new JacksonTimeModule()),
+                    new DynamicPluginModule(),
+                    new SystemPluginModule(systemPlugins),
                     new DatabaseModule(),
                     new AgentModule(),
                     new LogModule(),
@@ -149,6 +161,8 @@ public class DigdagEmbed
                     new ConfigModule(),
                     new WorkflowModule(),
                     new QueueModule(),
+                    new NotificationModule(),
+                    new StorageModule(),
                     (binder) -> {
                         binder.bind(ProjectArchiveLoader.class);
                         binder.bind(ConfigElement.class).toInstance(systemConfig);

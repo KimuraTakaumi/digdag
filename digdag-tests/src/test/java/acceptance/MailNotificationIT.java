@@ -1,6 +1,5 @@
 package acceptance;
 
-import com.google.common.base.Joiner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,7 +36,7 @@ public class MailNotificationIT
 
     @Rule
     public TemporaryDigdagServer server = TemporaryDigdagServer.builder()
-            .configuration(Joiner.on('\n').join(
+            .configuration(
                     "notification.type = mail",
                     "notification.mail.to = " + RECEIVER,
                     "notification.mail.from = " + SENDER,
@@ -45,7 +44,7 @@ public class MailNotificationIT
                     "notification.mail.port=" + port,
                     "notification.mail.username=mail-user",
                     "notification.mail.password=mail-pass",
-                    "notification.mail.tls=false"))
+                    "notification.mail.tls=false")
             .build();
 
     private Path config;
@@ -59,11 +58,7 @@ public class MailNotificationIT
         projectDir = folder.getRoot().toPath().resolve("foobar");
         config = folder.newFile().toPath();
 
-        // Create new project
-        CommandStatus initStatus = main("init",
-                "-c", config.toString(),
-                projectDir.toString());
-        assertThat(initStatus.code(), is(0));
+        TestUtils.createProject(projectDir);
 
         mailServer = new Wiser();
         mailServer.setHostname(HOSTNAME);

@@ -10,6 +10,9 @@ apt-get -y install oracle-java8-installer
 apt-get -y install oracle-java8-set-default
 rm -rf /var/cache/oracle-jdk8-installer
 
+# Maven
+apt-get -y install maven
+
 # Postgres
 add-apt-repository "deb https://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main"
 wget --quiet -O - https://postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
@@ -23,5 +26,9 @@ sudo -u postgres createdb -O digdag_test digdag_test
 # Python
 apt-get -y install python python-pip python-dev
 pip install sphinx recommonmark sphinx_rtd_theme
+
+# Fake S3
+apt-get -y install ruby
+sudo gem install fakes3
 
 rm -rf /var/lib/apt/lists/*

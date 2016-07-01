@@ -10,6 +10,8 @@ machine:
 dependencies:
   cache_directories:
     - "~/docker"
+    - "~/.gradle"
+    - "~/.m2"
   override:
     - docker/setup.sh
     - | # download and cache dependencies
@@ -21,10 +23,10 @@ dependencies:
       ./gradlew testClasses
 
 test:
+  pre:
   override:
-    - CI_NODE_INDEX=$CIRCLE_NODE_INDEX ci/run_test.sh:
+    - CI_NODE_TOTAL=$CIRCLE_NODE_TOTAL CI_NODE_INDEX=$CIRCLE_NODE_INDEX ci/run_test.sh:
         parallel: true
-
   post:
     - mkdir -p $CIRCLE_ARTIFACTS/reports
     - |
